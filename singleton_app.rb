@@ -1,113 +1,14 @@
+# Copyright Penn Taylor, 2014
+# GitHub: penntaylor
+# This software is licensed under the terms of the GNU General Public License,
+# version 2. A copy of this license should have been included with this file
+# in a separate file named LICENSE. If this file was not included, details
+# of the license can be found at http://www.gnu.org/licenses/gpl-2.0.html
+
 require 'socket'
 
-# This class represents a singleton application, an application that only
-# allows one copy of itself to be running. This class enforces singleness by
-# binding either a named Unix socket or a TCP socket.
-#
-# To make a singleton application, your application should define a class
-# that inherits from SingletonApp and overrides the method +#start_application+.
-# If your app needs to exit early -- anywhere that you would normally call
-# `exit N` -- you should call `stop_application N`. This will allow SingletonApp
-# to gracefully close and clean up its socket.
-#
-# To run the singleton, create an instance of your derived class and pass
-# either a filename to use as a Unix domain socket (Unix platforms only) or an
-# IP address and a port number to use for a TCP socket (any platform). Unix
-# domain sockets are faster and more secure than TCP sockets, so their use is
-# encouraged where available.
-#
-# Basic Example:
-# --------------
-#
-#     require './singleton_app'
-#        
-#     class MyApp < SingletonApp
-#       def start_application
-#         20.times do
-#           puts "MyApp is doing something."
-#           sleep(1)
-#         end
-#       end
-#     end
-#     
-#     # Run the application, Unix-only version
-#     MyApp.new("/tmp/my_app_socket")
-#
-#     # Cross-platform version. Notice how the port is specified.
-#     MyApp.new('127.0.0.1',:port=>5024)
-#
-# The basic example allows exactly one instance of the code in
-# start_application to run at a time. Subsequent attempts to run MyApp will
-# simply exit. If that's all you were looking for, you can skip the rest of
-# this documentation.
-#
-# If you want to know how to pass information from succeeding attempts to
-# start your application on to the running singleton, read on.
-#
-# Passing data to the singleton
-# =============================
-# **Your SingletonApp-derived class must be created with option**
-# `:listen=>true` **to support data passing.**
-#
-# Data-passing example
-# --------------------
-# When a second instance of this example is run, it sends the string
-# `'Sending data to the singleton'` to the singleton instance. The singleton
-# instance reads the string and prints it to STDOUT. If the resulting behavior
-# is still unclear, paste this code into a file and comment out the
-# appropriate MyApp.new, then run two copies of the app.
-#
-#     require './singleton_app'
-#     
-#     class MyApp < SingletonApp
-#       def start_application
-#         puts "Starting singleton application"
-#         20.times do
-#           puts "MyApp is doing something."
-#           sleep(1)
-#           # If we were to meet a condition that would cause us to want to
-#           # exit here, we would call
-#           #stop_application
-#         end
-#       end
-#     
-#       def send_data_to_singleton(connection)
-#         puts "Starting client application"
-#         connection.puts('Sending data to singleton')
-#       end
-#     
-#       def handle_data_from_client(connection)
-#         data = connection.read
-#         # Do something with the data...
-#         puts "Got: #{data}"
-#         # And then return either success or failure
-#         return true
-#       end
-#     end
-#    
-#     # Run the application, Unix-only version; notice the :listen option
-#     MyApp.new("/tmp/my_app_socket",:listen=>true)
-#     # Cross-platform version
-#     MyApp.new('127.0.0.1',:port=>5024,:listen=>true)
-#
-# The following table represents two separate terminal sessions running the
-# above code from the file `myapp.rb`. Time flows from top to bottom
-#
-#     |Terminal 1 (First instance)       | Terminal 2 (Second instance)     |
-#     |----------------------------------|----------------------------------|
-#     | $ ruby myapp.rb                  |                                  |
-#     | Starting singleton application   |                                  |
-#     | MyApp is doing something.        |                                  |
-#     | MyApp is doing something.        | $ ruby myapp.rb                  |
-#     | MyApp is doing something.        | Starting client application      |
-#     | Got: Sending data to singleton   |                                  |
-#     | MyApp is doing something.        | #second instance has exited      |
-#     | MyApp is doing something.        |                                  |
-#     | MyApp is doing something         |                                  |
-#     | ...etc...                        |                                  |
-#     |----------------------------------|----------------------------------|
-#
-
+# Class to make an entire application into a singleton. See Readme.md for
+# example use.
 class SingletonApp
 
 # Creates and runs a singleton application.
