@@ -17,7 +17,6 @@ method `#start_application`.
 Basic Example:
 --------------
 
-    ----
     require './singleton_app'
         
     class MyApp < SingletonApp
@@ -34,7 +33,6 @@ Basic Example:
 
     # Cross-platform version. Notice how the port is specified.
     MyApp.new('127.0.0.1',:port=>5024)
-    ----
 
 Data-passing example
 --------------------
@@ -47,7 +45,6 @@ When a second instance of this example is run, it sends the string
 `'Sending data to singleton'` to the singleton instance. The singleton
 instance reads the string and prints it to STDOUT.
 
-    ----
     require './singleton_app'
     
     class MyApp < SingletonApp
@@ -80,7 +77,6 @@ instance reads the string and prints it to STDOUT.
     MyApp.new("/tmp/my_app_socket",:listen=>true)
     # Cross-platform version
     MyApp.new('127.0.0.1',:port=>5024,:listen=>true)
-    ----
     
 The following table represents two separate terminal sessions running the
 above code from the file `myapp.rb`. Time flows from top to bottom
